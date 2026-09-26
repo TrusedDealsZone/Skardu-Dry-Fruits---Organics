@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Search, Truck, CheckCircle2, Clock, PackageCheck, AlertCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Order } from '../types';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const OrderTrackingModal: React.FC = () => {
   const { closeModal } = useStore();
@@ -19,7 +20,7 @@ export const OrderTrackingModal: React.FC = () => {
     setOrders(null);
 
     try {
-      const res = await fetch(`/api/orders/track/${encodeURIComponent(query.trim())}`);
+      const res = await fetch(`${API_URL}/api/orders/track/${encodeURIComponent(query.trim())}`);
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'No orders found matching this ID or Phone number.');
