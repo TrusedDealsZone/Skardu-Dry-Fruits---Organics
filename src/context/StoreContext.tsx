@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, StoreSettings, Category } from '../types';
 
+// Production API URL from Vercel environment variable.
+// Local development continues to use the Vite proxy when this is empty.
+const API_URL = import.meta.env.VITE_API_URL || '';
+
 interface StoreContextType {
   products: Product[];
   settings: StoreSettings;
@@ -12,11 +16,26 @@ interface StoreContextType {
   setSearchQuery: (q: string) => void;
   cart: CartItem[];
   wishlist: string[];
-  activeModal: { type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin'; data?: any } | null;
-  openModal: (type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin', data?: any) => void;
+  activeModal: {
+    type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin';
+    data?: any;
+  } | null;
+  openModal: (
+    type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin',
+    data?: any
+  ) => void;
   closeModal: () => void;
-  addToCart: (product: Product, weight?: string, price?: number, qty?: number) => void;
-  updateCartQty: (productId: string, weight: string, delta: number) => void;
+  addToCart: (
+    product: Product,
+    weight?: string,
+    price?: number,
+    qty?: number
+  ) => void;
+  updateCartQty: (
+    productId: string,
+    weight: string,
+    delta: number
+  ) => void;
   removeFromCart: (productId: string, weight: string) => void;
   clearCart: () => void;
   toggleWishlist: (productId: string) => void;
@@ -38,12 +57,14 @@ const DEFAULT_SETTINGS: StoreSettings = {
   whatsapp: '+923202822332',
   email: 'info@skardudryfruits.com',
   address: 'Skardu, Gilgit-Baltistan, Pakistan',
-  description: 'Your premier destination for natural, premium-grade Dry Fruits, mountain nuts, and 100% pure organic wild honey and salajeet across Pakistan.',
+  description:
+    'Your premier destination for natural, premium-grade Dry Fruits, mountain nuts, and 100% pure organic wild honey and salajeet across Pakistan.',
   currency: 'PKR',
   currencySymbol: 'Rs.',
   deliveryFee: 250,
   freeDeliveryAbove: 3000,
-  announcement: '🎉 Free Nationwide Delivery on orders above Rs. 3,000! Cash on Delivery (COD) available across Pakistan.',
+  announcement:
+    '🎉 Free Nationwide Delivery on orders above Rs. 3,000! Cash on Delivery (COD) available across Pakistan.',
   logo: '',
   favicon: '',
   facebook: '',
@@ -53,77 +74,107 @@ const DEFAULT_SETTINGS: StoreSettings = {
   heroBanner: {
     badge: '100% Natural Harvest',
     title: 'Pure & Premium Dry Fruits & Organic Essentials',
-    subtitle: 'Handpicked from the peaks of Gilgit-Baltistan and organic farms across Pakistan. Fresh, pure, and delivered with Cash on Delivery.',
+    subtitle:
+      'Handpicked from the peaks of Gilgit-Baltistan and organic farms across Pakistan. Fresh, pure, and delivered with Cash on Delivery.',
     ctaText: 'Explore Products',
-    bgImage: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1600&auto=format&fit=crop'
+    bgImage:
+      'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1600&auto=format&fit=crop',
   },
   theme: 'amber-gold',
   heroSlides: [
     {
       id: 'slide-1',
-      image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1600&auto=format&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=1600&auto=format&fit=crop',
       badge: 'Fresh Harvest 2026',
       title: 'Pure & Premium Dry Fruits & Organic Delights',
-      subtitle: 'Handpicked, naturally sun-dried nuts and 100% pure organic honeys & mountain salajeet delivered fresh to your doorstep.',
+      subtitle:
+        'Handpicked, naturally sun-dried nuts and 100% pure organic honeys & mountain salajeet delivered fresh to your doorstep.',
       ctaText: 'Explore Dry Fruits',
-      category: 'Dry Fruits'
+      category: 'Dry Fruits',
     },
     {
       id: 'slide-2',
-      image: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=1600&auto=format&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?q=80&w=1600&auto=format&fit=crop',
       badge: '100% Pure Nuts',
       title: 'Finest American Badam & Gilgit Akhrot Giri',
-      subtitle: 'Rich in Omega-3 fatty acids, plant protein, and essential vitality for daily memory and heart health.',
+      subtitle:
+        'Rich in Omega-3 fatty acids, plant protein, and essential vitality for daily memory and heart health.',
       ctaText: 'Shop Nuts Collection',
-      category: 'Dry Fruits'
+      category: 'Dry Fruits',
     },
     {
       id: 'slide-3',
-      image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=1600&auto=format&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=1600&auto=format&fit=crop',
       badge: 'Certified Organic',
       title: 'Pure Mountain Sidr Honey & Gold Shilajit',
-      subtitle: '100% raw, unadulterated Sidr (Beri) Honey and purified Skardu Salajeet for natural immunity & stamina.',
+      subtitle:
+        '100% raw, unadulterated Sidr (Beri) Honey and purified Skardu Salajeet for natural immunity & stamina.',
       ctaText: 'Explore Organic Range',
-      category: 'Organic Products'
+      category: 'Organic Products',
     },
     {
       id: 'slide-4',
-      image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=1600&auto=format&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=1600&auto=format&fit=crop',
       badge: 'Royal Selection',
       title: 'Crispy Roasted Irani Pistachios & Jumbo Kaju',
-      subtitle: 'Gently roasted and salted to perfection. A healthy luxury snack packed with high antioxidants and minerals.',
+      subtitle:
+        'Gently roasted and salted to perfection. A healthy luxury snack packed with high antioxidants and minerals.',
       ctaText: 'Shop Dry Fruits',
-      category: 'Dry Fruits'
-    }
-  ]
+      category: 'Dry Fruits',
+    },
+  ],
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [settings, setSettings] =
+    useState<StoreSettings>(DEFAULT_SETTINGS);
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('dryfruit_cart');
     return saved ? JSON.parse(saved) : [];
   });
+
   const [wishlist, setWishlist] = useState<string[]>(() => {
     const saved = localStorage.getItem('dryfruit_wishlist');
     return saved ? JSON.parse(saved) : [];
   });
-  const [activeModal, setActiveModal] = useState<{ type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin'; data?: any } | null>(null);
+
+  const [activeModal, setActiveModal] = useState<{
+    type:
+      | 'product'
+      | 'cart'
+      | 'checkout'
+      | 'auth'
+      | 'tracking'
+      | 'admin';
+    data?: any;
+  } | null>(null);
+
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const refreshProducts = async () => {
     try {
-      const res = await fetch('/api/products');
-      if (res.ok) {
-        const data = await res.json();
-        setProducts(data);
+      const res = await fetch(`${API_URL}/api/products`);
+
+      if (!res.ok) {
+        throw new Error(`Products API returned ${res.status}`);
       }
+
+      const data = await res.json();
+      setProducts(data);
     } catch (err) {
       console.error('Failed to load products:', err);
     }
@@ -131,11 +182,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const refreshSettings = async () => {
     try {
-      const res = await fetch('/api/settings');
-      if (res.ok) {
-        const data = await res.json();
-        setSettings(data);
+      const res = await fetch(`${API_URL}/api/settings`);
+
+      if (!res.ok) {
+        throw new Error(`Settings API returned ${res.status}`);
       }
+
+      const data = await res.json();
+      setSettings(data);
     } catch (err) {
       console.error('Failed to load settings:', err);
     }
@@ -143,11 +197,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const refreshCategories = async () => {
     try {
-      const res = await fetch('/api/categories');
-      if (res.ok) {
-        const data = await res.json();
-        setCategoriesList(data);
+      const res = await fetch(`${API_URL}/api/categories`);
+
+      if (!res.ok) {
+        throw new Error(`Categories API returned ${res.status}`);
       }
+
+      const data = await res.json();
+      setCategoriesList(data);
     } catch (err) {
       console.error('Failed to load categories:', err);
     }
@@ -156,50 +213,96 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Dynamic SEO title, description & favicon
   useEffect(() => {
     if (settings.storeName) {
-      document.title = `${settings.storeName} | ${settings.tagline || 'Premium Dry Fruits & Organics'}`;
+      document.title = `${settings.storeName} | ${
+        settings.tagline || 'Premium Dry Fruits & Organics'
+      }`;
     }
-    const metaDesc = document.querySelector('meta[name="description"]');
+
+    const metaDesc = document.querySelector(
+      'meta[name="description"]'
+    );
+
     if (metaDesc && settings.tagline) {
-      metaDesc.setAttribute('content', `${settings.storeName} - ${settings.tagline}`);
+      metaDesc.setAttribute(
+        'content',
+        `${settings.storeName} - ${settings.tagline}`
+      );
     }
+
     // Update favicon dynamically if admin has set one
     if (settings.favicon) {
-      let link = document.querySelector<HTMLLinkElement>('link[rel~="icon"]');
+      let link = document.querySelector<HTMLLinkElement>(
+        'link[rel~="icon"]'
+      );
+
       if (!link) {
         link = document.createElement('link');
         link.rel = 'icon';
         document.head.appendChild(link);
       }
+
       link.href = settings.favicon;
     }
-  }, [settings.storeName, settings.tagline, settings.favicon]);
+  }, [
+    settings.storeName,
+    settings.tagline,
+    settings.favicon,
+  ]);
 
-  // Categories list derived: Always includes 'All' + database categories
-  const categories = ['All', ...(categoriesList.length > 0 ? categoriesList.map(c => c.name) : ['Dry Fruits', 'Organic Products'])];
+  // Categories list derived:
+  // Always includes 'All' + database categories
+  const categories = [
+    'All',
+    ...(categoriesList.length > 0
+      ? categoriesList.map((c) => c.name)
+      : ['Dry Fruits', 'Organic Products']),
+  ];
 
-  // Check URL for secret admin route: /admin or /#admin or /secret-admin
+  // Check URL for secret admin route:
+  // /admin, /#admin or /secret-admin
   useEffect(() => {
     const checkAdminRoute = () => {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
-      if (path === '/admin' || path === '/secret-admin' || hash === '#admin' || hash === '#secret-admin') {
+
+      if (
+        path === '/admin' ||
+        path === '/secret-admin' ||
+        hash === '#admin' ||
+        hash === '#secret-admin'
+      ) {
         setActiveModal({ type: 'admin' });
       }
     };
+
     checkAdminRoute();
+
     window.addEventListener('popstate', checkAdminRoute);
     window.addEventListener('hashchange', checkAdminRoute);
+
     return () => {
-      window.removeEventListener('popstate', checkAdminRoute);
-      window.removeEventListener('hashchange', checkAdminRoute);
+      window.removeEventListener(
+        'popstate',
+        checkAdminRoute
+      );
+      window.removeEventListener(
+        'hashchange',
+        checkAdminRoute
+      );
     };
   }, []);
 
   // Dynamic Theme Application
   useEffect(() => {
     const theme = settings.theme || 'amber-gold';
-    document.documentElement.setAttribute('data-theme', theme);
+
+    document.documentElement.setAttribute(
+      'data-theme',
+      theme
+    );
+
     const root = document.documentElement;
+
     if (theme === 'emerald-green') {
       root.style.setProperty('--theme-color', '#2a8547');
       root.style.setProperty('--theme-hover', '#23693a');
@@ -230,64 +333,131 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [settings.theme]);
 
   useEffect(() => {
-    Promise.all([refreshProducts(), refreshSettings(), refreshCategories()]).finally(() => setLoading(false));
+    Promise.all([
+      refreshProducts(),
+      refreshSettings(),
+      refreshCategories(),
+    ]).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('dryfruit_cart', JSON.stringify(cart));
+    localStorage.setItem(
+      'dryfruit_cart',
+      JSON.stringify(cart)
+    );
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem('dryfruit_wishlist', JSON.stringify(wishlist));
+    localStorage.setItem(
+      'dryfruit_wishlist',
+      JSON.stringify(wishlist)
+    );
   }, [wishlist]);
 
-  const openModal = (type: 'product' | 'cart' | 'checkout' | 'auth' | 'tracking' | 'admin', data?: any) => {
+  const openModal = (
+    type:
+      | 'product'
+      | 'cart'
+      | 'checkout'
+      | 'auth'
+      | 'tracking'
+      | 'admin',
+    data?: any
+  ) => {
     setActiveModal({ type, data });
   };
 
   const closeModal = () => {
     if (activeModal?.type === 'admin') {
       if (window.location.hash.includes('admin')) {
-        window.history.replaceState(null, '', window.location.pathname);
+        window.history.replaceState(
+          null,
+          '',
+          window.location.pathname
+        );
       }
+
       if (window.location.pathname.includes('/admin')) {
         window.history.replaceState(null, '', '/');
       }
     }
+
     setActiveModal(null);
   };
 
-  const addToCart = (product: Product, weight?: string, price?: number, qty: number = 1) => {
+  const addToCart = (
+    product: Product,
+    weight?: string,
+    price?: number,
+    qty: number = 1
+  ) => {
     const chosenWeight = weight || product.weight;
-    const chosenPrice = price !== undefined ? price : product.price;
+    const chosenPrice =
+      price !== undefined ? price : product.price;
 
-    setCart(prev => {
-      const index = prev.findIndex(item => item.product.id === product.id && item.selectedWeight === chosenWeight);
+    setCart((prev) => {
+      const index = prev.findIndex(
+        (item) =>
+          item.product.id === product.id &&
+          item.selectedWeight === chosenWeight
+      );
+
       if (index > -1) {
         const updated = [...prev];
         updated[index].quantity += qty;
         return updated;
       }
-      return [...prev, { product, selectedWeight: chosenWeight, unitPrice: chosenPrice, quantity: qty }];
+
+      return [
+        ...prev,
+        {
+          product,
+          selectedWeight: chosenWeight,
+          unitPrice: chosenPrice,
+          quantity: qty,
+        },
+      ];
     });
   };
 
-  const updateCartQty = (productId: string, weight: string, delta: number) => {
-    setCart(prev => {
+  const updateCartQty = (
+    productId: string,
+    weight: string,
+    delta: number
+  ) => {
+    setCart((prev) => {
       return prev
-        .map(item => {
-          if (item.product.id === productId && item.selectedWeight === weight) {
+        .map((item) => {
+          if (
+            item.product.id === productId &&
+            item.selectedWeight === weight
+          ) {
             const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
+
+            return newQty > 0
+              ? { ...item, quantity: newQty }
+              : null;
           }
+
           return item;
         })
         .filter(Boolean) as CartItem[];
     });
   };
 
-  const removeFromCart = (productId: string, weight: string) => {
-    setCart(prev => prev.filter(item => !(item.product.id === productId && item.selectedWeight === weight)));
+  const removeFromCart = (
+    productId: string,
+    weight: string
+  ) => {
+    setCart((prev) =>
+      prev.filter(
+        (item) =>
+          !(
+            item.product.id === productId &&
+            item.selectedWeight === weight
+          )
+      )
+    );
   };
 
   const clearCart = () => {
@@ -295,17 +465,34 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const toggleWishlist = (productId: string) => {
-    setWishlist(prev =>
-      prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+    setWishlist((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
     );
   };
 
-  const isWishlisted = (productId: string) => wishlist.includes(productId);
+  const isWishlisted = (productId: string) =>
+    wishlist.includes(productId);
 
-  const cartSubtotal = cart.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
-  const deliveryFee = cartSubtotal >= settings.freeDeliveryAbove || cartSubtotal === 0 ? 0 : settings.deliveryFee;
+  const cartSubtotal = cart.reduce(
+    (acc, item) =>
+      acc + item.unitPrice * item.quantity,
+    0
+  );
+
+  const deliveryFee =
+    cartSubtotal >= settings.freeDeliveryAbove ||
+    cartSubtotal === 0
+      ? 0
+      : settings.deliveryFee;
+
   const cartTotal = cartSubtotal + deliveryFee;
-  const cartItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  const cartItemsCount = cart.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   return (
     <StoreContext.Provider
@@ -336,7 +523,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deliveryFee,
         cartTotal,
         cartItemsCount,
-        loading
+        loading,
       }}
     >
       {children}
@@ -346,6 +533,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useStore = () => {
   const context = useContext(StoreContext);
-  if (!context) throw new Error('useStore must be used within a StoreProvider');
+
+  if (!context) {
+    throw new Error(
+      'useStore must be used within a StoreProvider'
+    );
+  }
+
   return context;
 };
