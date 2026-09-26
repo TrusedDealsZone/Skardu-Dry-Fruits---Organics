@@ -3,6 +3,7 @@ import { X, CheckCircle, Truck, ShoppingBag, Phone, MapPin, AlertCircle, Message
 import { useStore } from '../context/StoreContext';
 import { useAuth } from '../context/AuthContext';
 import { Order } from '../types';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const CheckoutModal: React.FC = () => {
   const { cart, cartSubtotal, deliveryFee, cartTotal, closeModal, clearCart, settings, openModal } = useStore();
@@ -62,7 +63,7 @@ export const CheckoutModal: React.FC = () => {
         userId: user?.id || null
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
