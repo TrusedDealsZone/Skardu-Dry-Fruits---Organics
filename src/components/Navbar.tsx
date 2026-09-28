@@ -46,25 +46,25 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* MAIN NAVIGATION */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between min-h-20 py-2 sm:h-20 sm:py-0 gap-2 sm:gap-4">
           {/* LOGO & BRAND */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-none">
             <button
               onClick={() => {
                 setSelectedCategory('All');
                 setSearchQuery('');
               }}
-              className="flex items-center gap-2.5 text-left group cursor-pointer"
+              className="flex items-center gap-2 sm:gap-2.5 text-left group cursor-pointer min-w-0 max-w-[calc(100vw-190px)] sm:max-w-none"
             >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-amber-700 flex items-center justify-center text-white text-2xl shadow-md group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 flex-shrink-0 rounded-xl bg-gradient-to-br from-brand-500 to-amber-700 flex items-center justify-center text-white text-xl sm:text-2xl shadow-md group-hover:scale-105 transition-transform">
                 <h1>SDF</h1>
               </div>
-              <div>
-                <span className="font-serif text-2xl font-bold tracking-tight text-stone-900 block leading-tight">
+              <div className="min-w-0 flex-1">
+                <span className="font-serif text-base sm:text-2xl font-bold tracking-tight text-stone-900 block leading-tight break-words sm:whitespace-nowrap">
                   {settings.storeName}
                 </span>
-                <span className="text-[10px] uppercase font-semibold tracking-wider text-brand-600 block">
+                <span className="hidden sm:block text-[10px] uppercase font-semibold tracking-wider text-brand-600 leading-tight">
                   Pure Dryfruits & Organic
                 </span>
               </div>
@@ -94,7 +94,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* RIGHT ACTION BUTTONS */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0">
             {/* CUSTOMER ACCOUNT */}
             <div className="relative">
               <button
@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
                     openModal('auth');
                   }
                 }}
-                className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-lg text-stone-700 hover:bg-stone-100 transition-colors text-xs font-medium cursor-pointer"
+                className="flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-2 rounded-lg text-stone-700 hover:bg-stone-100 transition-colors text-xs font-medium cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center text-stone-600">
                   <User className="w-4 h-4" />
@@ -163,7 +163,7 @@ export const Navbar: React.FC = () => {
                   setSelectedCategory('Wishlist');
                 }
               }}
-              className="relative p-2.5 rounded-full text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+              className="relative p-2 rounded-full sm:p-2.5 text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
               title="Saved items"
             >
               <Heart className="w-5 h-5" />
@@ -177,7 +177,7 @@ export const Navbar: React.FC = () => {
             {/* CART DRAWER BUTTON */}
             <button
               onClick={() => openModal('cart')}
-              className="flex items-center gap-2 bg-stone-900 hover:bg-brand-700 text-white px-3 sm:px-4 py-2 rounded-full text-xs font-semibold shadow-md transition-all group cursor-pointer"
+              className="flex items-center gap-2 bg-stone-900 hover:bg-brand-700 text-white px-2.5 sm:px-4 py-2 rounded-full text-xs font-semibold shadow-md transition-all group cursor-pointer"
             >
               <div className="relative">
                 <ShoppingBag className="w-4 h-4" />
