@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Star, Heart, ShoppingBag, Eye, Check } from 'lucide-react';
 import { Product } from '../types';
 import { useStore } from '../context/StoreContext';
+import { assetUrl } from './../utils/api';
 
 interface ProductCardProps {
   product: Product;
@@ -49,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* IMAGE & BADGES CONTAINER */}
       <div className="relative aspect-square w-full bg-stone-100 overflow-hidden">
         <img
-          src={product.image}
+          src={assetUrl(product.image)}
           alt={product.name}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           loading="lazy"

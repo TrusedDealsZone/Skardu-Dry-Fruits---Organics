@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem, StoreSettings, Category } from '../types';
+import { API_URL } from '../utils/api';
 
 // Production API URL from Vercel environment variable.
 // Local development continues to use the Vite proxy when this is empty.
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 interface StoreContextType {
   products: Product[];

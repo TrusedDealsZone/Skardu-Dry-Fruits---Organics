@@ -32,8 +32,8 @@ Double click `start.bat` in this folder. It will install dependencies, launch bo
 ## 👑 Admin Panel Access & Login
 
 - Click the **"Admin"** button in the top right navbar (or the floating shield button on bottom right).
-- **Admin Email / Username**: `admin@dryfruits.com` (or `admin`)
-- **Admin Password**: `admin123`
+- **Admin Email / Username**: use the existing admin account in MongoDB (the included seed data uses `skardu@dryfruits.com`; `admin` is also accepted by the login route)
+- **Admin Password**: use the admin password configured for that account. The seed script can create the fallback admin password `admin123` only when the default admin account does not already exist.
 
 ### What the Admin Can Do:
 1. **Edit Products**:
@@ -61,6 +61,25 @@ Double click `start.bat` in this folder. It will install dependencies, launch bo
    - Change Hero Banner Headline, Subtitle, Badge, and Background image.
 
 ---
+
+## ☁️ Production Deployment (Vercel + Render)
+
+### Render (Backend)
+- Start command: `npm run start`
+- Set `NODE_ENV=production`
+- Set `MONGODB_URI` to the private MongoDB Atlas connection string.
+- Set `JWT_SECRET` to a long random private value.
+- Set `CLIENT_URL` to the Vercel frontend URL (multiple origins can be comma-separated).
+
+### Vercel (Frontend)
+- Framework: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Add public environment variable `VITE_API_URL` with the Render backend URL, for example:
+  `https://your-service.onrender.com`
+- Do not put MongoDB credentials or `JWT_SECRET` in any `VITE_*` variable.
+
+The frontend uses `VITE_API_URL` for authentication, products, settings, categories, reviews, checkout, tracking, admin orders, uploads, and admin updates. Uploaded `/uploads/...` image paths are automatically resolved against the Render backend.
 
 ## 🛍️ Customer Features
 

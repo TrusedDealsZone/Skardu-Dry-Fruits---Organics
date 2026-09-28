@@ -7,6 +7,8 @@ import {
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Product, Order, StoreSettings, Category } from '../../types';
+import { API_URL, assetUrl } from '../../utils/api';
+
 
 export const AdminPanel: React.FC = () => {
   const {
@@ -82,7 +84,7 @@ export const AdminPanel: React.FC = () => {
     if (!token) return;
     setLoadingOrders(true);
     try {
-      const res = await fetch('/api/orders', {
+      const res = await fetch(`${API_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -205,7 +207,7 @@ export const AdminPanel: React.FC = () => {
     formData.append('image', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -230,7 +232,7 @@ export const AdminPanel: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append('image', file);
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -285,7 +287,7 @@ export const AdminPanel: React.FC = () => {
     setSaveSuccess(null);
 
     try {
-      const url = isAddMode ? '/api/products' : `/api/products/${editingProduct?.id}`;
+      const url = isAddMode ? `${API_URL}/api/products` : `${API_URL}/api/products/${editingProduct?.id}`;
       const method = isAddMode ? 'POST' : 'PUT';
 
       const res = await fetch(url, {
@@ -318,7 +320,7 @@ export const AdminPanel: React.FC = () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      const res = await fetch(`${API_URL}/api/products/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -333,7 +335,7 @@ export const AdminPanel: React.FC = () => {
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/orders/${orderId}/status`, {
+      const res = await fetch(`${API_URL}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -359,7 +361,7 @@ export const AdminPanel: React.FC = () => {
     setSaveSuccess(null);
 
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch(`${API_URL}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -402,7 +404,7 @@ export const AdminPanel: React.FC = () => {
     setCatError(null);
     setCatSuccess(null);
     try {
-      const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories';
+      const url = editingCategory ? `${API_URL}/api/categories/${editingCategory.id}` : `${API_URL}/api/categories`;
       const method = editingCategory ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
@@ -428,7 +430,7 @@ export const AdminPanel: React.FC = () => {
     if (!window.confirm(`Delete category "${cat.name}"? Products in this category must be reassigned first.`)) return;
     if (!token) return;
     try {
-      const res = await fetch(`/api/categories/${cat.id}`, {
+      const res = await fetch(`${API_URL}/api/categories/${cat.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -799,7 +801,7 @@ export const AdminPanel: React.FC = () => {
                               <td className="p-3">
                                 <div className="flex items-center gap-3">
                                   <img
-                                    src={p.image}
+                                    src={assetUrl(p.image)}
                                     alt={p.name}
                                     className="w-10 h-10 object-cover rounded-lg border border-stone-200 flex-shrink-0"
                                   />
@@ -1321,7 +1323,7 @@ export const AdminPanel: React.FC = () => {
                           {/* SLIDE IMAGE */}
                           <div className="flex items-center gap-3">
                             <img
-                              src={slide.image}
+                              src={assetUrl(slide.image)}
                               alt={`Slide ${idx + 1}`}
                               className="w-20 h-12 object-cover rounded-lg border border-stone-300 flex-shrink-0"
                               onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200x120'; }}
@@ -1530,7 +1532,7 @@ export const AdminPanel: React.FC = () => {
 
                   <div className="flex items-center gap-4">
                     <img
-                      src={productForm.image || 'https://via.placeholder.com/150'}
+                      src={assetUrl(productForm.image || 'https://via.placeholder.com/150')}
                       alt="Preview"
                       className="w-16 h-16 object-cover rounded-xl border border-stone-300 bg-white"
                       onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150'; }}

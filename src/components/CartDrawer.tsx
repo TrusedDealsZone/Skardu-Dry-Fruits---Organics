@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Truck } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { assetUrl } from '../utils/api';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -80,7 +81,7 @@ export const CartDrawer: React.FC = () => {
               cart.map((item, idx) => (
                 <div key={`${item.product.id}-${item.selectedWeight}-${idx}`} className="pt-4 first:pt-0 flex gap-3.5 items-start">
                   <img
-                    src={item.product.image}
+                    src={assetUrl(item.product.image)}
                     alt={item.product.name}
                     className="w-16 h-16 object-cover rounded-xl border border-stone-200 bg-stone-50 flex-shrink-0"
                   />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Search, Truck, CheckCircle2, Clock, PackageCheck, AlertCircle } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { Order } from '../types';
-const API_URL = import.meta.env.VITE_API_URL || '';
+import { API_URL } from '../utils/api';
 
 export const OrderTrackingModal: React.FC = () => {
   const { closeModal } = useStore();

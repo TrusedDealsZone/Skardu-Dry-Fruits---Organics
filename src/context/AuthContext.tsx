@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
+import { API_URL } from '../utils/api';
 
 // Uses Render API in production through Vercel environment variable.
 // If empty, local development continues to use the Vite proxy.
-const API_URL = import.meta.env.VITE_API_URL || '';
 
 interface AuthContextType {
   user: User | null;

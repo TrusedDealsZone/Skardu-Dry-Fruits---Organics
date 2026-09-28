@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, Mail, MapPin, Truck, ShieldCheck, Heart } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { assetUrl } from '../utils/api';
 
 export const Footer: React.FC = () => {
   const { settings, setSelectedCategory, openModal } = useStore();
@@ -13,7 +14,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.storeName} className="w-10 h-10 object-cover rounded-xl shadow-md" />
+                <img src={assetUrl(settings.logo)} alt={settings.storeName} className="w-10 h-10 object-cover rounded-xl shadow-md" />
               ) : (
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-amber-700 flex items-center justify-center text-white text-xl shadow-md">
                   🌰

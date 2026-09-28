@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, Star, Heart, ShoppingBag, Truck, ShieldCheck, Check, MessageCircle, MessageSquare, Send } from 'lucide-react';
 import { Product, Review } from '../types';
 import { useStore } from '../context/StoreContext';
+import { API_URL, assetUrl } from '../utils/api';
+
 
 interface ProductModalProps {
   product: Product;
@@ -40,7 +42,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product }) => {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch(`/api/products/${product.id}/reviews`);
+      const res = await fetch(`${API_URL}/api/products/${product.id}/reviews`);
       if (res.ok) {
         const data = await res.json();
         setReviews(data.reviews || []);
@@ -65,7 +67,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product }) => {
     setSubmittingReview(true);
     setReviewMsg(null);
     try {
-      const res = await fetch(`/api/products/${product.id}/reviews`, {
+      const res = await fetch(`${API_URL}/api/products/${product.id}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -138,7 +140,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product }) => {
           {/* IMAGE SECTION */}
           <div className="relative bg-stone-100 p-6 flex items-center justify-center min-h-[320px]">
             <img
-              src={product.image}
+              src={assetUrl(product.image)}
               alt={product.name}
               className="max-h-[360px] w-full object-cover rounded-2xl shadow-sm"
             />

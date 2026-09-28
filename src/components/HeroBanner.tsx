@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, ShieldCheck, Truck, RefreshCw, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { assetUrl } from './../utils/api';
 
 export const HeroBanner: React.FC = () => {
   const { settings, setSelectedCategory } = useStore();
@@ -45,7 +46,7 @@ export const HeroBanner: React.FC = () => {
             }`}
           >
             <img
-              src={s.image}
+              src={assetUrl(s.image)}
               alt={s.title}
               className="w-full h-full object-cover object-center opacity-40 scale-105 transition-transform duration-7000 ease-out"
               onError={e => { (e.target as HTMLImageElement).src = banner.bgImage; }}
