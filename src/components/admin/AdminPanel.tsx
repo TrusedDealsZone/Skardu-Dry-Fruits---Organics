@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   X, ShieldCheck, Package, ShoppingBag, Settings, LogOut,
   Plus, Edit2, Trash2, Upload, Check, AlertCircle, Phone, MapPin, RefreshCw,
@@ -74,7 +74,7 @@ export const AdminPanel: React.FC = () => {
   // Category Management State
   const [catModalOpen, setCatModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [catForm, setCatForm] = useState({ name: '', icon: '🌰', description: '' });
+  const [catForm, setCatForm] = useState({ name: '', icon: 'ðŸŒ°', description: '' });
   const [catSaving, setCatSaving] = useState(false);
   const [catError, setCatError] = useState<string | null>(null);
   const [catSuccess, setCatSuccess] = useState<string | null>(null);
@@ -379,11 +379,11 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
-  // ──── CATEGORY MANAGEMENT ────
+  // â”€â”€â”€â”€ CATEGORY MANAGEMENT â”€â”€â”€â”€
 
   const openAddCategory = () => {
     setEditingCategory(null);
-    setCatForm({ name: '', icon: '🌰', description: '' });
+    setCatForm({ name: '', icon: 'ðŸŒ°', description: '' });
     setCatError(null);
     setCatSuccess(null);
     setCatModalOpen(true);
@@ -391,7 +391,7 @@ export const AdminPanel: React.FC = () => {
 
   const openEditCategory = (cat: Category) => {
     setEditingCategory(cat);
-    setCatForm({ name: cat.name, icon: cat.icon || '🌰', description: cat.description || '' });
+    setCatForm({ name: cat.name, icon: cat.icon || 'ðŸŒ°', description: cat.description || '' });
     setCatError(null);
     setCatSuccess(null);
     setCatModalOpen(true);
@@ -453,16 +453,16 @@ export const AdminPanel: React.FC = () => {
   const categoryOptions = categoriesList.length > 0
     ? categoriesList
     : [
-        { id: 'dry-fruits', name: 'Dry Fruits', icon: '🌰', description: '' },
-        { id: 'organic-products', name: 'Organic Products', icon: '🌿', description: '' }
+        { id: 'dry-fruits', name: 'Dry Fruits', icon: 'ðŸŒ°', description: '' },
+        { id: 'organic-products', name: 'Organic Products', icon: 'ðŸŒ¿', description: '' }
       ];
 
   const THEME_OPTIONS = [
-    { value: 'amber-gold', label: '🌟 Amber Gold (Default)' },
-    { value: 'emerald-green', label: '🌿 Emerald Green' },
-    { value: 'royal-burgundy', label: '🍷 Royal Burgundy' },
-    { value: 'midnight-gold', label: '🌙 Midnight Navy' },
-    { value: 'earth-brown', label: '🪵 Earth Brown' }
+    { value: 'amber-gold', label: 'ðŸŒŸ Amber Gold (Default)' },
+    { value: 'emerald-green', label: 'ðŸŒ¿ Emerald Green' },
+    { value: 'royal-burgundy', label: 'ðŸ· Royal Burgundy' },
+    { value: 'midnight-gold', label: 'ðŸŒ™ Midnight Navy' },
+    { value: 'earth-brown', label: 'ðŸªµ Earth Brown' }
   ];
 
   return (
@@ -506,7 +506,7 @@ export const AdminPanel: React.FC = () => {
           <div className="p-8 max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
             <div className="text-center mb-6">
               <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
-                🔒
+                ðŸ”’
               </div>
               <h3 className="font-serif text-2xl font-bold text-stone-900">Admin Authentication</h3>
               <p className="text-xs text-stone-500 mt-1">
@@ -572,7 +572,7 @@ export const AdminPanel: React.FC = () => {
                     : 'text-stone-600 hover:bg-stone-200'
                 }`}
               >
-                <span>📊 Dashboard</span>
+                <span>ðŸ“Š Dashboard</span>
               </button>
 
               <button
@@ -645,7 +645,7 @@ export const AdminPanel: React.FC = () => {
                         Rs. {totalRevenue.toLocaleString()}
                       </span>
                       <span className="text-[10px] text-emerald-600 font-semibold mt-1 block">
-                        ✓ Collected via Cash on Delivery
+                        âœ“ Collected via Cash on Delivery
                       </span>
                     </div>
 
@@ -684,7 +684,7 @@ export const AdminPanel: React.FC = () => {
                         className="text-[10px] text-brand-600 font-semibold mt-1 block cursor-pointer hover:underline"
                         onClick={() => setActiveTab('categories')}
                       >
-                        Manage Categories →
+                        Manage Categories â†’
                       </span>
                     </div>
                   </div>
@@ -699,7 +699,7 @@ export const AdminPanel: React.FC = () => {
                         onClick={() => setActiveTab('orders')}
                         className="text-xs font-semibold text-brand-700 hover:underline cursor-pointer"
                       >
-                        View All Orders →
+                        View All Orders â†’
                       </button>
                     </div>
 
@@ -900,7 +900,7 @@ export const AdminPanel: React.FC = () => {
                       return (
                         <div key={cat.id} className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">{cat.icon || '🌰'}</span>
+                            <span className="text-2xl">{cat.icon || 'ðŸŒ°'}</span>
                             <div>
                               <div className="font-bold text-stone-900 text-sm">{cat.name}</div>
                               {cat.description && (
@@ -1032,7 +1032,7 @@ export const AdminPanel: React.FC = () => {
                               <span className="font-bold text-stone-900 block mb-1">Items Ordered:</span>
                               {order.items.map((it, idx) => (
                                 <div key={idx} className="flex justify-between text-[11px] text-stone-700">
-                                  <span>{it.name} ({it.weight}) × {it.quantity}</span>
+                                  <span>{it.name} ({it.weight}) Ã— {it.quantity}</span>
                                   <span className="font-mono font-semibold">Rs. {(it.price * it.quantity).toLocaleString()}</span>
                                 </div>
                               ))}
@@ -1326,7 +1326,7 @@ export const AdminPanel: React.FC = () => {
                               src={assetUrl(slide.image)}
                               alt={`Slide ${idx + 1}`}
                               className="w-20 h-12 object-cover rounded-lg border border-stone-300 flex-shrink-0"
-                              onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/200x120'; }}
+                              onError={e => { (e.target as HTMLImageElement).src = '/image-fallback.svg'; }}
                             />
                             <div className="flex-1 space-y-1.5">
                               <label className="px-3 py-1.5 bg-white border border-stone-300 hover:bg-stone-100 rounded-lg text-xs font-semibold text-stone-700 flex items-center gap-1.5 cursor-pointer w-fit shadow-sm">
@@ -1416,7 +1416,7 @@ export const AdminPanel: React.FC = () => {
                     disabled={savingSettings}
                     className="px-6 py-3 bg-stone-900 hover:bg-brand-600 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
-                    {savingSettings ? 'Saving Settings...' : '💾 Save All Website Settings'}
+                    {savingSettings ? 'Saving Settings...' : 'ðŸ’¾ Save All Website Settings'}
                   </button>
                 </form>
               )}
@@ -1532,10 +1532,10 @@ export const AdminPanel: React.FC = () => {
 
                   <div className="flex items-center gap-4">
                     <img
-                      src={assetUrl(productForm.image || 'https://via.placeholder.com/150')}
+                      src={assetUrl(productForm.image || '/image-fallback.svg')}
                       alt="Preview"
                       className="w-16 h-16 object-cover rounded-xl border border-stone-300 bg-white"
-                      onError={e => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150'; }}
+                      onError={e => { (e.target as HTMLImageElement).src = '/image-fallback.svg'; }}
                     />
 
                     <div className="flex-1 space-y-2">
@@ -1661,7 +1661,7 @@ export const AdminPanel: React.FC = () => {
                 {productForm.category.toLowerCase().includes('gem') && (
                   <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-3">
                     <div className="flex items-center gap-2 border-b border-amber-200/60 pb-2">
-                      <span className="text-base">💎</span>
+                      <span className="text-base">ðŸ’Ž</span>
                       <div>
                         <h4 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
                           Gemstone Details (Option C: Per Piece / Per Carat)
@@ -1690,7 +1690,7 @@ export const AdminPanel: React.FC = () => {
                           className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs font-semibold focus:outline-none"
                         >
                           <option value="per_piece">Per Piece (Fixed Price)</option>
-                          <option value="per_carat">Per Carat (Carat × Rate)</option>
+                          <option value="per_carat">Per Carat (Carat Ã— Rate)</option>
                           <option value="both">Both (Piece & Carat Info)</option>
                         </select>
                       </div>
@@ -1894,7 +1894,7 @@ export const AdminPanel: React.FC = () => {
                     type="text"
                     value={catForm.icon}
                     onChange={e => setCatForm({ ...catForm, icon: e.target.value })}
-                    placeholder="e.g. 🌰"
+                    placeholder="e.g. ðŸŒ°"
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none"
                   />
                 </div>
@@ -1937,3 +1937,4 @@ export const AdminPanel: React.FC = () => {
     </div>
   );
 };
+
