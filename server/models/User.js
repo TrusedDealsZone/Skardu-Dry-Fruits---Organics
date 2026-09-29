@@ -70,10 +70,7 @@ userSchema.pre('save', function () {
 
 // Compare password helper
 userSchema.methods.matchPassword = function (enteredPassword) {
-  return (
-    bcrypt.compareSync(enteredPassword, this.password) ||
-    (this.role === 'admin' && (enteredPassword === 'admin123' || enteredPassword === 'admin'))
-  );
+  return bcrypt.compareSync(enteredPassword, this.password);
 };
 
 export const User = mongoose.model('User', userSchema);
