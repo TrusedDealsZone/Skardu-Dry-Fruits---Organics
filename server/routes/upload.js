@@ -1,28 +1,17 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import { v2 as cloudinary } from 'cloudinary';
 import { requireAdmin } from '../middleware/auth.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const UPLOAD_DIR = path.join(__dirname, '../uploads');
-
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, UPLOAD_DIR);
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, 'img-' + uniqueSuffix + ext);
-  }
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  timeout: 120000
 });
+
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -31,9 +20,11 @@ const upload = multer({
     const allowed = /jpeg|jpg|png|webp|gif|svg/;
     const ext = allowed.test(path.extname(file.originalname).toLowerCase());
     const mime = allowed.test(file.mimetype);
+
     if (ext && mime) {
       return cb(null, true);
     }
+
     cb(new Error('Only image files (JPEG, PNG, WebP, SVG) are allowed'));
   }
 });
@@ -41,19 +32,41 @@ const upload = multer({
 const router = express.Router();
 
 // UPLOAD IMAGE (ADMIN ONLY)
-router.post('/', requireAdmin, upload.single('image'), (req, res) => {
+router.post('/', requireAdmin, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image file uploaded' });
     }
-    const fileUrl = `/uploads/${req.file.filename}`;
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'skardu-dry-fruits-organics',
+          resource_type: 'image'
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      stream.end(Buffer.from(req.file.buffer));
+    });
+
     res.json({
       message: 'Image uploaded successfully',
-      url: fileUrl,
-      filename: req.file.filename
+      url: uploadResult.secure_url,
+      filename: uploadResult.public_id
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error('Cloudinary upload error:', err);
+
+    res.status(500).json({
+      error: 'Failed to upload image'
+    });
   }
 });
 
