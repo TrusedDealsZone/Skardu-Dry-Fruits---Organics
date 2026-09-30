@@ -88,10 +88,23 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
+
+    // Existing per-carat price kept for compatibility
     pricePerCarat: {
       type: Number,
       default: 0
     },
+
+    // Gemstone per-carat price range
+    minPricePerCarat: {
+      type: Number,
+      default: 0
+    },
+    maxPricePerCarat: {
+      type: Number,
+      default: 0
+    },
+
     clarity: {
       type: String,
       default: ''
@@ -150,20 +163,25 @@ productSchema.pre('save', function () {
   if (!this.id) {
     this.id = 'prod-' + Date.now();
   }
+
   if (!this.name && this.title) {
     this.name = this.title;
   }
+
   if (!this.title && this.name) {
     this.title = this.name;
   }
+
   if (this.stock !== undefined && this.stockCount === undefined) {
     this.stockCount = this.stock;
   }
+
   if (this.stockCount !== undefined && this.stock === undefined) {
     this.stock = this.stockCount;
   }
 
   // Gemstone price calculation logic if per_carat
+  // Keep existing pricePerCarat for cart/order compatibility.
   if (this.sellingType === 'per_carat' && this.carat && this.pricePerCarat) {
     this.price = Math.round(this.carat * this.pricePerCarat);
   }

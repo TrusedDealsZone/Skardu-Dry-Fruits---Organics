@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X, ShieldCheck, Package, ShoppingBag, Settings, LogOut,
   Plus, Edit2, Trash2, Upload, Check, AlertCircle, Phone, MapPin, RefreshCw,
@@ -55,7 +55,9 @@ export const AdminPanel: React.FC = () => {
     sellingType: 'per_piece' as 'per_piece' | 'per_carat' | 'both',
     carat: 0,
     pricePerCarat: 0,
-    clarity: '',
+    minPricePerCarat: 0,
+    maxPricePerCarat: 0,
+    clarity: 'Eye Clean',
     cut: '',
     color: '',
     treatment: 'None / Natural',
@@ -74,7 +76,7 @@ export const AdminPanel: React.FC = () => {
   // Category Management State
   const [catModalOpen, setCatModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [catForm, setCatForm] = useState({ name: '', icon: 'ðŸŒ°', description: '' });
+  const [catForm, setCatForm] = useState({ name: '', icon: '🌰', description: '' });
   const [catSaving, setCatSaving] = useState(false);
   const [catError, setCatError] = useState<string | null>(null);
   const [catSuccess, setCatSuccess] = useState<string | null>(null);
@@ -148,6 +150,8 @@ export const AdminPanel: React.FC = () => {
       sellingType: (prod.sellingType || 'per_piece') as 'per_piece' | 'per_carat' | 'both',
       carat: prod.carat || 0,
       pricePerCarat: prod.pricePerCarat || 0,
+      minPricePerCarat: prod.minPricePerCarat || 0,
+      maxPricePerCarat: prod.maxPricePerCarat || 0,
       clarity: prod.clarity || '',
       cut: prod.cut || '',
       color: prod.color || '',
@@ -184,6 +188,8 @@ export const AdminPanel: React.FC = () => {
       sellingType: 'per_piece' as 'per_piece' | 'per_carat' | 'both',
       carat: 0,
       pricePerCarat: 0,
+    minPricePerCarat: 0,
+    maxPricePerCarat: 0,
       clarity: 'Eye Clean',
       cut: 'Brilliant Cut',
       color: 'Natural',
@@ -379,11 +385,11 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
-  // â”€â”€â”€â”€ CATEGORY MANAGEMENT â”€â”€â”€â”€
+  // ──── CATEGORY MANAGEMENT ────
 
   const openAddCategory = () => {
     setEditingCategory(null);
-    setCatForm({ name: '', icon: 'ðŸŒ°', description: '' });
+    setCatForm({ name: '', icon: '🌰', description: '' });
     setCatError(null);
     setCatSuccess(null);
     setCatModalOpen(true);
@@ -391,7 +397,7 @@ export const AdminPanel: React.FC = () => {
 
   const openEditCategory = (cat: Category) => {
     setEditingCategory(cat);
-    setCatForm({ name: cat.name, icon: cat.icon || 'ðŸŒ°', description: cat.description || '' });
+    setCatForm({ name: cat.name, icon: cat.icon || '🌰', description: cat.description || '' });
     setCatError(null);
     setCatSuccess(null);
     setCatModalOpen(true);
@@ -453,16 +459,16 @@ export const AdminPanel: React.FC = () => {
   const categoryOptions = categoriesList.length > 0
     ? categoriesList
     : [
-        { id: 'dry-fruits', name: 'Dry Fruits', icon: 'ðŸŒ°', description: '' },
-        { id: 'organic-products', name: 'Organic Products', icon: 'ðŸŒ¿', description: '' }
+        { id: 'dry-fruits', name: 'Dry Fruits', icon: '🌰', description: '' },
+        { id: 'organic-products', name: 'Organic Products', icon: '🌿', description: '' }
       ];
 
   const THEME_OPTIONS = [
-    { value: 'amber-gold', label: 'ðŸŒŸ Amber Gold (Default)' },
-    { value: 'emerald-green', label: 'ðŸŒ¿ Emerald Green' },
-    { value: 'royal-burgundy', label: 'ðŸ· Royal Burgundy' },
-    { value: 'midnight-gold', label: 'ðŸŒ™ Midnight Navy' },
-    { value: 'earth-brown', label: 'ðŸªµ Earth Brown' }
+    { value: 'amber-gold', label: '🌟 Amber Gold (Default)' },
+    { value: 'emerald-green', label: '🌿 Emerald Green' },
+    { value: 'royal-burgundy', label: '🍷 Royal Burgundy' },
+    { value: 'midnight-gold', label: '🌙 Midnight Navy' },
+    { value: 'earth-brown', label: '🪵 Earth Brown' }
   ];
 
   return (
@@ -506,7 +512,7 @@ export const AdminPanel: React.FC = () => {
           <div className="p-8 max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
             <div className="text-center mb-6">
               <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
-                ðŸ”’
+                🔒
               </div>
               <h3 className="font-serif text-2xl font-bold text-stone-900">Admin Authentication</h3>
               <p className="text-xs text-stone-500 mt-1">
@@ -572,7 +578,7 @@ export const AdminPanel: React.FC = () => {
                     : 'text-stone-600 hover:bg-stone-200'
                 }`}
               >
-                <span>ðŸ“Š Dashboard</span>
+                <span>📊 Dashboard</span>
               </button>
 
               <button
@@ -645,7 +651,7 @@ export const AdminPanel: React.FC = () => {
                         Rs. {totalRevenue.toLocaleString()}
                       </span>
                       <span className="text-[10px] text-emerald-600 font-semibold mt-1 block">
-                        âœ“ Collected via Cash on Delivery
+                        ✓ Collected via Cash on Delivery
                       </span>
                     </div>
 
@@ -684,7 +690,7 @@ export const AdminPanel: React.FC = () => {
                         className="text-[10px] text-brand-600 font-semibold mt-1 block cursor-pointer hover:underline"
                         onClick={() => setActiveTab('categories')}
                       >
-                        Manage Categories â†’
+                        Manage Categories →
                       </span>
                     </div>
                   </div>
@@ -699,7 +705,7 @@ export const AdminPanel: React.FC = () => {
                         onClick={() => setActiveTab('orders')}
                         className="text-xs font-semibold text-brand-700 hover:underline cursor-pointer"
                       >
-                        View All Orders â†’
+                        View All Orders →
                       </button>
                     </div>
 
@@ -900,7 +906,7 @@ export const AdminPanel: React.FC = () => {
                       return (
                         <div key={cat.id} className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">{cat.icon || 'ðŸŒ°'}</span>
+                            <span className="text-2xl">{cat.icon || '🌰'}</span>
                             <div>
                               <div className="font-bold text-stone-900 text-sm">{cat.name}</div>
                               {cat.description && (
@@ -1032,7 +1038,7 @@ export const AdminPanel: React.FC = () => {
                               <span className="font-bold text-stone-900 block mb-1">Items Ordered:</span>
                               {order.items.map((it, idx) => (
                                 <div key={idx} className="flex justify-between text-[11px] text-stone-700">
-                                  <span>{it.name} ({it.weight}) Ã— {it.quantity}</span>
+                                  <span>{it.name} ({it.weight}) × {it.quantity}</span>
                                   <span className="font-mono font-semibold">Rs. {(it.price * it.quantity).toLocaleString()}</span>
                                 </div>
                               ))}
@@ -1416,7 +1422,7 @@ export const AdminPanel: React.FC = () => {
                     disabled={savingSettings}
                     className="px-6 py-3 bg-stone-900 hover:bg-brand-600 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
-                    {savingSettings ? 'Saving Settings...' : 'ðŸ’¾ Save All Website Settings'}
+                    {savingSettings ? 'Saving Settings...' : '💾 Save All Website Settings'}
                   </button>
                 </form>
               )}
@@ -1661,7 +1667,7 @@ export const AdminPanel: React.FC = () => {
                 {productForm.category.toLowerCase().includes('gem') && (
                   <div className="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80 space-y-3">
                     <div className="flex items-center gap-2 border-b border-amber-200/60 pb-2">
-                      <span className="text-base">ðŸ’Ž</span>
+                      <span className="text-base">💎</span>
                       <div>
                         <h4 className="text-xs font-bold text-amber-950 uppercase tracking-wider">
                           Gemstone Details (Option C: Per Piece / Per Carat)
@@ -1672,70 +1678,149 @@ export const AdminPanel: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
-                          Selling Type
-                        </label>
-                        <select
-                          value={productForm.sellingType}
-                          onChange={e => {
-                            const newType = e.target.value as 'per_piece' | 'per_carat' | 'both';
-                            let newPrice = productForm.price;
-                            if (newType === 'per_carat' && productForm.carat && productForm.pricePerCarat) {
-                              newPrice = Math.round(productForm.carat * productForm.pricePerCarat);
-                            }
-                            setProductForm({ ...productForm, sellingType: newType, price: newPrice });
-                          }}
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs font-semibold focus:outline-none"
-                        >
-                          <option value="per_piece">Per Piece (Fixed Price)</option>
-                          <option value="per_carat">Per Carat (Carat Ã— Rate)</option>
-                          <option value="both">Both (Piece & Carat Info)</option>
-                        </select>
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+  <div>
+    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+      Selling Type
+    </label>
+    <select
+      value={productForm.sellingType}
+      onChange={e => {
+        const newType = e.target.value as 'per_piece' | 'per_carat' | 'both';
+        let newPrice = productForm.price;
 
-                      <div>
-                        <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
-                          Weight / Carats (ct)
-                        </label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          placeholder="e.g. 3.50"
-                          value={productForm.carat || ''}
-                          onChange={e => {
-                            const ct = Number(e.target.value);
-                            let newPrice = productForm.price;
-                            if (productForm.sellingType === 'per_carat' && ct && productForm.pricePerCarat) {
-                              newPrice = Math.round(ct * productForm.pricePerCarat);
-                            }
-                            setProductForm({ ...productForm, carat: ct, price: newPrice, weight: `${ct} ct` });
-                          }}
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
-                        />
-                      </div>
+        if (
+          newType === 'per_carat' &&
+          productForm.carat &&
+          productForm.pricePerCarat
+        ) {
+          newPrice = Math.round(
+            productForm.carat * productForm.pricePerCarat
+          );
+        }
 
-                      <div>
-                        <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
-                          Price Per Carat (PKR)
-                        </label>
-                        <input
-                          type="number"
-                          placeholder="e.g. 5000"
-                          value={productForm.pricePerCarat || ''}
-                          onChange={e => {
-                            const ppc = Number(e.target.value);
-                            let newPrice = productForm.price;
-                            if (productForm.sellingType === 'per_carat' && productForm.carat && ppc) {
-                              newPrice = Math.round(productForm.carat * ppc);
-                            }
-                            setProductForm({ ...productForm, pricePerCarat: ppc, price: newPrice });
-                          }}
-                          className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
-                        />
-                      </div>
-                    </div>
+        setProductForm({
+          ...productForm,
+          sellingType: newType,
+          price: newPrice
+        });
+      }}
+      className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs font-semibold focus:outline-none"
+    >
+      <option value="per_piece">Per Piece (Fixed Price)</option>
+      <option value="per_carat">Per Carat (Carat × Rate)</option>
+      <option value="both">Both (Piece & Carat Info)</option>
+    </select>
+  </div>
+
+  <div>
+    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+      Weight / Carats (ct)
+    </label>
+    <input
+      type="number"
+      step="0.01"
+      placeholder="e.g. 3.50"
+      value={productForm.carat || ''}
+      onChange={e => {
+        const ct = Number(e.target.value);
+        let newPrice = productForm.price;
+
+        if (
+          productForm.sellingType === 'per_carat' &&
+          ct &&
+          productForm.pricePerCarat
+        ) {
+          newPrice = Math.round(
+            ct * productForm.pricePerCarat
+          );
+        }
+
+        setProductForm({
+          ...productForm,
+          carat: ct,
+          price: newPrice,
+          weight: `${ct} ct`
+        });
+      }}
+      className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
+    />
+  </div>
+
+  <div>
+    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+      Price Per Carat (PKR)
+    </label>
+    <input
+      type="number"
+      placeholder="e.g. 5000"
+      value={productForm.pricePerCarat || ''}
+      onChange={e => {
+        const ppc = Number(e.target.value);
+        let newPrice = productForm.price;
+
+        if (
+          productForm.sellingType === 'per_carat' &&
+          productForm.carat &&
+          ppc
+        ) {
+          newPrice = Math.round(
+            productForm.carat * ppc
+          );
+        }
+
+        setProductForm({
+          ...productForm,
+          pricePerCarat: ppc,
+          price: newPrice
+        });
+      }}
+      className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
+    />
+  </div>
+
+  <div>
+    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+      Min Price Per Carat (PKR)
+    </label>
+    <input
+      type="number"
+      min="0"
+      placeholder="e.g. 5000"
+      value={productForm.minPricePerCarat || ''}
+      onChange={e => {
+        const minPrice = Number(e.target.value);
+
+        setProductForm({
+          ...productForm,
+          minPricePerCarat: minPrice
+        });
+      }}
+      className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
+    />
+  </div>
+
+  <div>
+    <label className="block text-[11px] font-bold text-stone-700 uppercase tracking-wider mb-1">
+      Max Price Per Carat (PKR)
+    </label>
+    <input
+      type="number"
+      min="0"
+      placeholder="e.g. 15000"
+      value={productForm.maxPricePerCarat || ''}
+      onChange={e => {
+        const maxPrice = Number(e.target.value);
+
+        setProductForm({
+          ...productForm,
+          maxPricePerCarat: maxPrice
+        });
+      }}
+                 className="w-full px-2.5 py-1.5 bg-white border border-stone-200 rounded-lg text-xs focus:outline-none"
+                />
+                 </div>
+                   </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
@@ -1894,7 +1979,7 @@ export const AdminPanel: React.FC = () => {
                     type="text"
                     value={catForm.icon}
                     onChange={e => setCatForm({ ...catForm, icon: e.target.value })}
-                    placeholder="e.g. ðŸŒ°"
+                    placeholder="e.g. 🌰"
                     className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-500 outline-none"
                   />
                 </div>

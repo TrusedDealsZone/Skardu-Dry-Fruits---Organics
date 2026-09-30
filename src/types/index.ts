@@ -40,6 +40,8 @@ export interface Product {
   sellingType?: 'per_piece' | 'per_carat' | 'both';
   carat?: number;
   pricePerCarat?: number;
+  minPricePerCarat?: number;
+  maxPricePerCarat?: number;
   clarity?: string;
   cut?: string;
   color?: string;

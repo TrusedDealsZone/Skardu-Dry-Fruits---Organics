@@ -12,20 +12,41 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart, toggleWishlist, isWishlisted, openModal } = useStore();
 
   const isGemstone = product.category.toLowerCase().includes('gem');
-  const gemstonePrice = product.sellingType === 'per_carat' && product.carat && product.pricePerCarat
-    ? Math.round(product.carat * product.pricePerCarat)
-    : product.price;
-  const weightOptions = isGemstone
-    ? [{
-        label: product.sellingType === 'per_carat' ? `${product.carat || 0} ct` : 'Per Piece',
-        price: gemstonePrice
-      }]
-    : (product.weights && product.weights.length > 0
-      ? product.weights
-      : [{ label: product.weight || '1 kg', price: product.price }]);
 
-  const [selectedWeight, setSelectedWeight] = useState(weightOptions[weightOptions.length - 1].label);
-  const [currentPrice, setCurrentPrice] = useState(weightOptions[weightOptions.length - 1].price);
+  const gemstonePrice =
+    product.sellingType === 'per_carat' &&
+    product.carat &&
+    product.pricePerCarat
+      ? Math.round(product.carat * product.pricePerCarat)
+      : product.price;
+
+  const hasGemstonePriceRange =
+    isGemstone &&
+    product.minPricePerCarat &&
+    product.maxPricePerCarat;
+
+  const weightOptions = isGemstone
+    ? [
+        {
+          label:
+            product.sellingType === 'per_carat'
+              ? `${product.carat || 0} ct`
+              : 'Per Piece',
+          price: gemstonePrice
+        }
+      ]
+    : product.weights && product.weights.length > 0
+      ? product.weights
+      : [{ label: product.weight || '1 kg', price: product.price }];
+
+  const [selectedWeight, setSelectedWeight] = useState(
+    weightOptions[weightOptions.length - 1].label
+  );
+
+  const [currentPrice, setCurrentPrice] = useState(
+    weightOptions[weightOptions.length - 1].price
+  );
+
   const [addedAnimation, setAddedAnimation] = useState(false);
 
   const handleWeightChange = (weightLabel: string, price: number) => {
@@ -72,7 +93,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-stone-600 hover:text-red-500 shadow-md transition-all hover:scale-110 cursor-pointer"
           title="Save to wishlist"
         >
-          <Heart className={`w-4 h-4 ${wishlisted ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart
+            className={`w-4 h-4 ${
+              wishlisted ? 'fill-red-500 text-red-500' : ''
+            }`}
+          />
         </button>
 
         {/* QUICK VIEW OVERLAY BUTTON */}
@@ -95,19 +120,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div>
           {/* CATEGORY & RATING */}
           <div className="flex items-center justify-between text-[11px] text-stone-500 mb-1.5">
-            <span className={`font-semibold uppercase tracking-wider ${
-              product.category === 'Organic Products' ? 'text-emerald-700' : 'text-amber-700'
-            }`}>
+            <span
+              className={`font-semibold uppercase tracking-wider ${
+                product.category === 'Organic Products'
+                  ? 'text-emerald-700'
+                  : 'text-amber-700'
+              }`}
+            >
               {product.category}
             </span>
+
             {product.reviewsCount > 0 ? (
               <div className="flex items-center gap-1 text-amber-500 font-bold">
                 <Star className="w-3 h-3 fill-amber-400" />
                 <span>{product.rating.toFixed(1)}</span>
-                <span className="text-stone-400 text-[10px]">({product.reviewsCount})</span>
+                <span className="text-stone-400 text-[10px]">
+                  ({product.reviewsCount})
+                </span>
               </div>
             ) : (
-              <span className="text-stone-400 text-[10px] italic">No reviews yet</span>
+              <span className="text-stone-400 text-[10px] italic">
+                No reviews yet
+              </span>
             )}
           </div>
 
@@ -120,31 +154,38 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {isGemstone ? (
             <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
               <span className="text-[10px] px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                {product.sellingType === 'per_carat' ? `${product.carat || 0} ct` : 'Per Piece'}
+                {product.sellingType === 'per_carat'
+                  ? `${product.carat || 0} ct`
+                  : 'Per Piece'}
               </span>
+
               {product.sellingType === 'both' && product.carat ? (
-                <span className="text-[10px] text-stone-500">{product.carat} ct</span>
+                <span className="text-[10px] text-stone-500">
+                  {product.carat} ct
+                </span>
               ) : null}
             </div>
-          ) : weightOptions.length > 1 && (
-            <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
-              {weightOptions.map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleWeightChange(opt.label, opt.price);
-                  }}
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-all ${
-                    selectedWeight === opt.label
-                      ? 'bg-stone-900 text-white font-bold'
-                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+          ) : (
+            weightOptions.length > 1 && (
+              <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                {weightOptions.map((opt) => (
+                  <button
+                    key={opt.label}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleWeightChange(opt.label, opt.price);
+                    }}
+                    className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-all ${
+                      selectedWeight === opt.label
+                        ? 'bg-stone-900 text-white font-bold'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )
           )}
         </div>
 
@@ -153,22 +194,46 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-base sm:text-lg font-bold text-stone-900 font-mono">
-                Rs. {currentPrice.toLocaleString()}
+                {hasGemstonePriceRange ? (
+                  <>
+                    PKR {product.minPricePerCarat!.toLocaleString()} –{' '}
+                    {product.maxPricePerCarat!.toLocaleString()}
+                  </>
+                ) : (
+                  <>Rs. {currentPrice.toLocaleString()}</>
+                )}
               </span>
-              {product.originalPrice && (
+
+              {!hasGemstonePriceRange && product.originalPrice && (
                 <span className="text-xs text-stone-400 line-through font-mono">
-                  Rs. {Math.round(product.originalPrice * (currentPrice / product.price)).toLocaleString()}
+                  Rs.{' '}
+                  {Math.round(
+                    product.originalPrice *
+                      (currentPrice / product.price)
+                  ).toLocaleString()}
                 </span>
               )}
             </div>
+
             <span className="text-[10px] text-stone-500 block">
               {isGemstone ? (
-                product.sellingType === 'per_carat'
-                  ? `Price for ${product.carat || 0} ct`
-                  : product.sellingType === 'both'
-                    ? `Per Piece • ${product.carat || 0} ct`
-                    : 'Per Piece'
-              ) : `Pack: ${selectedWeight}`}
+                product.sellingType === 'per_carat' ? (
+                  hasGemstonePriceRange ? (
+                    <>
+                      PKR {product.minPricePerCarat!.toLocaleString()} –{' '}
+                      {product.maxPricePerCarat!.toLocaleString()} / carat
+                    </>
+                  ) : (
+                    `Price for ${product.carat || 0} ct`
+                  )
+                ) : product.sellingType === 'both' ? (
+                  `Per Piece • ${product.carat || 0} ct`
+                ) : (
+                  'Per Piece'
+                )
+              ) : (
+                `Pack: ${selectedWeight}`
+              )}
             </span>
           </div>
 
@@ -180,8 +245,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               !product.inStock
                 ? 'bg-stone-200 text-stone-400 cursor-not-allowed'
                 : addedAnimation
-                ? 'bg-emerald-600 text-white scale-95'
-                : 'bg-stone-900 hover:bg-brand-600 text-white hover:shadow-md'
+                  ? 'bg-emerald-600 text-white scale-95'
+                  : 'bg-stone-900 hover:bg-brand-600 text-white hover:shadow-md'
             }`}
           >
             {addedAnimation ? (
